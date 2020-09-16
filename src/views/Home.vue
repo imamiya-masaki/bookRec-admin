@@ -32,6 +32,12 @@
           required
           placeholder="Enter book_group_id"
         ></b-form-input>
+        <cld-context cloudName="teamb">
+          <div>
+           <cld-image publicId="sample" width="50" crop="scale" />
+          </div>
+        </cld-context>
+        <input type="file" v-on:change="upload($event.target.files)" accept="image/*" />
     <b-button @click="submit()" variant="success">登録</b-button>
     <div class="hidariyose">本list</div>
     <b-table striped hover :items="items"></b-table>
@@ -60,6 +66,11 @@ export default {
         author: '',
         price: '',
         uri: ''
+      },
+      cloudinary: {
+        uploadPreset: 'dftaxtkz',
+        apiKey: '762256589886267',
+        cloudName: 'teamb'
       }
     }
   },
@@ -74,6 +85,11 @@ export default {
         console.log('err', err)
       })
   },
+  computed: {
+    clUrl: function () {
+      return `https://api.cloudinary.com/v1_1/${this.cloudinary.cloudName}/upload`
+    }
+  },
   methods: {
     submit: function () {
       console.log('', this.form)
@@ -81,17 +97,34 @@ export default {
       for (const key of Object.keys(this.form)) {
         let get = this.form[key]
         if (key === 'price' || key === 'book_group_id') {
-          get = Number(this.form[key])
+          get = Number(this.form[key] || 0)
         }
         postData[key] = get
-        axios.post('/book/regist', postData)
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
       }
+      axios.post('/book_regist', postData)
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log('check', postData)
+          console.log(err)
+        })
+    },
+    upload: function (file) {
+      const formData = new FormData()
+      formData.append('file', file[0])
+      formData.append('upload_preset', this.cloudinary.uploadPreset)
+      formData.append('tags', 'gs-vue,gs-vue-uploaded')
+      // For debug purpose only
+      // Inspects the content of formData
+      for (var pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1])
+      }
+      // Execute api
+      axios.post(this.clUrl, formData).then(res => {
+        console.log('Success!!', res)
+        this.form.uri = res.data.url
+      })
     }
   }
 }

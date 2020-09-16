@@ -5,9 +5,13 @@ import './plugins/bootstrap-vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
+import Cloudinary from 'cloudinary-vue'
 Vue.config.productionTip = false
 
+Vue.use(Cloudinary, {
+  configuration: { cloudName: 'teamb' },
+  components: ['CldImage']
+})
 new Vue({
   router,
   store,
