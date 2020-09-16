@@ -1,6 +1,7 @@
 # bookrec-admin
 
 ## Project setup
+rootで
 ```
 npm install
 ```
