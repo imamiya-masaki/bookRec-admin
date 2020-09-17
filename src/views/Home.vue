@@ -24,6 +24,7 @@
           id="input-1"
           v-model="form.uri"
           required
+          readonly
           placeholder="Enter uri"
         ></b-form-input>
         <b-form-input
@@ -32,12 +33,7 @@
           required
           placeholder="Enter book_group_id"
         ></b-form-input>
-        <cld-context cloudName="teamb">
-          <div>
-           <cld-image publicId="sample" width="50" crop="scale" />
-          </div>
-        </cld-context>
-        <input type="file" v-on:change="upload($event.target.files)" accept="image/*" />
+        ここを押すとuploadされるよ！！-><input type="file" v-on:change="upload($event.target.files)" accept="image/*" />
     <b-button @click="submit()" variant="success">登録</b-button>
     <div class="hidariyose">本list</div>
     <b-table striped hover :items="items"></b-table>

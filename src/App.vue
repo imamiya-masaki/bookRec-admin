@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">bookRec-admin</router-link>
+      <router-link to="/">bookRec-admin-book</router-link> |
+      <router-link to="/about">bookRec-admin-user</router-link>
     </div>
     <router-view/>
   </div>
