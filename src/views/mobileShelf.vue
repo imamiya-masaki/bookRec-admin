@@ -1,41 +1,19 @@
 <template>
-<div>
-  <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    coupon
-    <b-form-input
-          id="input-1"
-          v-model="form.UserId"
-          required
-          placeholder="Enter Twitter Token"
-        ></b-form-input>
-        <b-form-input
-          id="input-2"
-          v-model="form.Percent"
-          required
-          placeholder="Enter percent"
-        ></b-form-input>
-    <b-button @click="submit()" variant="success">登録</b-button>
-    <div class="hidariyose">userlist</div>
-    <b-table striped hover :items="items">
-      </b-table>
-    <div class="hidariyose">couponAll</div>
+  <div class="mobileShelf">
   </div>
-  <div>
-    <div v-for="(item,key) in cuopons" :key="key" >
-      {{item}}
-      </div>
-    </div>
-    </div>
 </template>
 
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import axios from 'axios'
+import 'onsenui/css/onsenui.css'
+import 'onsenui/css/onsen-css-components.css'
+import VueOnsen from 'vue-onsenui'
+
+Vue.use(VueOnsen)
 export default {
-  name: 'Home',
+  name: 'mobileShelf',
   components: {
   },
   data () {
@@ -46,13 +24,17 @@ export default {
         { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
         { age: 38, first_name: 'Jami', last_name: 'Carney' }
       ],
-      cuopons: [
-
-      ],
       form: {
-        UserId: '',
-        Percent: ''
+        book_group_id: 0,
+        title: '',
+        author: '',
+        price: '',
+        uri: ''
       },
+      twitter_id: '',
+      events: [],
+      someData: [],
+      input: "",
       cloudinary: {
         uploadPreset: 'dftaxtkz',
         apiKey: '762256589886267',
@@ -60,20 +42,21 @@ export default {
       }
     }
   },
+  created: function (){
+    var self = this
+        this.$http.get('http://localhost:8081/bookShelf', function (data, status, request) {
+            for(var i = 0; i < data.length; i++){
+                this.events.push(data[i]);
+            }
+        }).error(function (data, status, request) {
+            // handle error
+        })
+  },
   mounted () {
     axios
-      .get('/users')
+      .get('/book/')
       .then(res => {
-        this.items = res.data.users
-        console.log('check', res)
-      })
-      .catch(err => {
-        console.log('err', err)
-      })
-    axios
-      .get('/couponAll/')
-      .then(res => {
-        this.cuopons = res.data
+        this.items = res.data
         console.log('check', res)
       })
       .catch(err => {
@@ -88,17 +71,17 @@ export default {
   methods: {
     submit: function () {
       console.log('', this.form)
-      const postData = { UserId: '', Percent: 0 }
+      const postData = { title: '', author: '', book_group_id: 0, price: 0, uri: '' }
       for (const key of Object.keys(this.form)) {
         let get = this.form[key]
-        if (key === 'Percent' || key === 'UserId') {
-          get = Number(this.form[key] || 5)
+        if (key === 'price' || key === 'book_group_id') {
+          get = Number(this.form[key] || 0)
         }
         postData[key] = get
       }
-      axios.post('/coupon', postData)
+      axios.post('/book_regist', postData)
         .then((res) => {
-          console.log('res', res)
+          console.log(res)
         })
         .catch((err) => {
           console.log('check', postData)
